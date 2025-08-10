@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>E-Learning Catalog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navbar -->
+    <nav class="bg-white border-b shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Left Section: Logo & Links -->
+                <div class="flex items-center space-x-6">
+                    <!-- Logo -->
+                    <a href="/" class="text-xl font-semibold text-blue-600">E-Learning</a>
+
+                    <!-- Categories (Visible to everyone) -->
+                    <a href="{% url 'categories_list' %}" class="text-gray-700 hover:text-blue-600">Categories</a>
+
+                    <!-- Authenticated Links -->
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'my_courses' %}" class="text-gray-700 hover:text-blue-600">My Courses</a>
+                        <a href="{% url 'instructor_dashboard' %}" class="text-gray-700 hover:text-blue-600">Instructor Dashboard</a>
+                        <a href="{% url 'submit_ticket' %}" class="text-gray-700 hover:text-blue-600">Contact Support</a>
+                    {% endif %}
+                </div>
+
+                <!-- Center Section: Search -->
+                <div class="flex items-center space-x-2 relative">
+                    <input 
+                        type="text" 
+                        id="search-box" 
+                        placeholder="Search courses..." 
+                        class="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                    <ul id="search-results" class="absolute top-full left-0 mt-2 w-full bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto z-10"></ul>
+                </div>
+
+                <!-- Right Section: Auth Links & User Info -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <span class="text-gray-700">{{ user.profile.points }} pts</span>
+                        {% if user.profile.badge %}
+                            <span class="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded">{{ user.profile.badge }}</span>
+                        {% endif %}
+                        <a href="{% url 'profile' %}" class="text-gray-700 hover:text-blue-600">Profile</a>
+                        <a href="{% url 'logout' %}" class="text-gray-700 hover:text-blue-600">Logout</a>
+                    {% else %}
+                        <a href="{% url 'signup' %}" class="text-gray-700 hover:text-blue-600">Sign Up</a>
+                        <a href="{% url 'login' %}" class="text-gray-700 hover:text-blue-600">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script>
+        document.getElementById('search-box').addEventListener('input', function() {
+            let query = this.value;
+            if (query.length > 1) {
+                fetch(`/ajax/search/?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let resultsBox = document.getElementById('search-results');
+                        resultsBox.innerHTML = '';
+                        data.results.forEach(item => {
+                            resultsBox.innerHTML += `<li class="px-3 py-2 hover:bg-gray-100"><a href="/course/${item.id}/" class="text-gray-700 hover:text-blue-600">${item.title}</a></li>`;
+                        });
+                    });
+            } else {
+                document.getElementById('search-results').innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>

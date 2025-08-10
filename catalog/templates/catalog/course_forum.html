@@ -1,0 +1,36 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h2>Discussion for {{ course.title }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Post Message</button>
+</form>
+
+<hr>
+
+{% for post in posts %}
+  <div style="border:1px solid #ccc; padding:10px; margin:10px 0;">
+    <p><strong>{{ post.user.username }}</strong> ({{ post.created_at|date:"Y-m-d H:i" }}):</p>
+    <p>{{ post.content }}</p>
+
+    <h5>Replies:</h5>
+    {% for reply in post.replies.all %}
+      <p style="margin-left:20px;"><strong>{{ reply.user.username }}</strong>: {{ reply.content }}</p>
+    {% empty %}
+      <p style="margin-left:20px;">No replies yet.</p>
+    {% endfor %}
+
+    <form method="post" action="{% url 'reply_post' post.id %}">
+      {% csrf_token %}
+      <textarea name="content" rows="2" placeholder="Your reply..."></textarea><br>
+      <button type="submit">Reply</button>
+    </form>
+  </div>
+{% empty %}
+  <p>No posts yet. Start the discussion above!</p>
+{% endfor %}
+
+<a href="{% url 'course_detail' course.pk %}">Back to Course</a>
+{% endblock %}

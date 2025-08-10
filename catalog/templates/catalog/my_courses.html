@@ -1,0 +1,11 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>My Enrolled Courses</h1>
+<ul>
+    {% for enrollment in enrollments %}
+        <li><a href="{% url 'course_detail' enrollment.course.pk %}">{{ enrollment.course.title }}</a></li>
+    {% empty %}
+        <li>You are not enrolled in any courses yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

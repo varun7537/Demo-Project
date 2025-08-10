@@ -1,0 +1,25 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>Instructor Dashboard</h1>
+
+{% if course_data %}
+  <ul>
+    {% for data in course_data %}
+      <li>
+        <h4>{{ data.course.title }}</h4>
+        <p>Enrolled students: {{ data.num_enrollments }}</p>
+        <ul>
+          {% for enroll in data.enrollments %}
+            <li>{{ enroll.user.username }}</li>
+          {% empty %}
+            <li>No students yet.</li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You have no courses assigned yet.</p>
+{% endif %}
+
+{% endblock %}

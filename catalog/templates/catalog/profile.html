@@ -1,0 +1,29 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>{{ user.username }}'s Profile</h1>
+
+<h2>Enrolled Courses</h2>
+<ul>
+  {% for enrollment in enrollments %}
+    <li>
+      <a href="{% url 'course_detail' enrollment.course.pk %}">{{ enrollment.course.title }}</a>
+      {% if enrollment.is_completed %}
+        ✅ Completed
+      {% else %}
+        ❌ In Progress
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>You are not enrolled in any courses yet.</li>
+  {% endfor %}
+</ul>
+
+<h2>My Reviews</h2>
+<ul>
+  {% for review in reviews %}
+    <li>{{ review.course.title }}: "{{ review.comment }}"</li>
+  {% empty %}
+    <li>You haven't written any reviews yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

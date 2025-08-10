@@ -1,0 +1,38 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h2>{{ quiz.title }}</h2>
+
+<p><strong>Time Limit:</strong> {{ quiz.time_limit }} minutes</p>
+<p id="timer"></p>
+
+<form id="quizForm" method="post">
+  {% csrf_token %}
+  {% for question in questions %}
+    <div style="margin-bottom: 20px;">
+      <p><strong>{{ question.text }}</strong></p>
+      <label><input type="radio" name="question_{{ question.id }}" value="1" required> {{ question.option1 }}</label><br>
+      <label><input type="radio" name="question_{{ question.id }}" value="2"> {{ question.option2 }}</label><br>
+      <label><input type="radio" name="question_{{ question.id }}" value="3"> {{ question.option3 }}</label><br>
+      <label><input type="radio" name="question_{{ question.id }}" value="4"> {{ question.option4 }}</label>
+    </div>
+  {% endfor %}
+  <button type="submit">Submit Quiz</button>
+</form>
+<script>
+  let timeLeft = {{ quiz.time_limit }} * 60;
+
+  function updateTimer() {
+    let mins = Math.floor(timeLeft / 60);
+    let secs = timeLeft % 60;
+    document.getElementById("timer").innerText = `Time Left: ${mins}m ${secs}s`;
+    timeLeft--;
+    if (timeLeft < 0) {
+      clearInterval(timerInterval);
+      document.getElementById("quizForm").submit();
+    }
+  }
+
+  updateTimer();
+  let timerInterval = setInterval(updateTimer, 1000);
+</script>
+{% endblock %}

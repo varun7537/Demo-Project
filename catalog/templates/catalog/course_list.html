@@ -1,0 +1,12 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<h1>All Courses</h1>
+<ul>
+    {% for course in courses %}
+        <li><a href="{% url 'course_detail' course.pk %}">{{ course.title }}</a></li>
+    {% empty %}
+        <li>No courses available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

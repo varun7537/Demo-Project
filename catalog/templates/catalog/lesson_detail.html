@@ -1,0 +1,10 @@
+{% load breadcrumbs %}
+{% breadcrumbs course=lesson.course lesson=lesson %}
+
+{% if user.is_authenticated %}
+  {% if lesson.lessonbookmark_set.filter(user=user).exists %}
+    <a href="{% url 'toggle_bookmark' lesson.id %}">Remove Bookmark</a>
+  {% else %}
+    <a href="{% url 'toggle_bookmark' lesson.id %}">Bookmark Lesson</a>
+  {% endif %}
+{% endif %}
